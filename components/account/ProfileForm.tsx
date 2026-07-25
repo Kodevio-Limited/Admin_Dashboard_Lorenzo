@@ -25,10 +25,10 @@ export default function ProfileForm() {
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      firstName: 'John',
+      firstName: 'Nexus',
       lastName: 'Admin',
-      email: 'john@admin.com',
-      phone: '+1 (555) 123-4567',
+      email: 'admin@nexusproperty.com',
+      phone: '+1 (876) 555-0199',
     },
   });
 

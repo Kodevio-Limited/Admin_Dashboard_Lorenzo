@@ -1,4 +1,5 @@
 export const NAV_ITEMS = [
+  { label: 'Overview', href: '/dashboard/overview', icon: '/assets/icons/clients-icon.svg' },
   { label: 'Clients', href: '/dashboard/clients', icon: '/assets/icons/clients-icon.svg' },
   { label: 'Properties', href: '/dashboard/properties', icon: '/assets/icons/properties-icon.svg' },
   { label: 'Reports', href: '/dashboard/reports', icon: '/assets/icons/reports-icon.svg' },

@@ -8,12 +8,14 @@ import Header from '@/components/layout/Header';
 import { Button } from '@/components/shared/Button';
 import { useMedia } from '@/hooks/useMedia';
 import { useProperties } from '@/hooks/useProperties';
+import { useReports } from '@/hooks/useReports';
 import { useUIStore } from '@/store/uiStore';
 import type { Media } from '@/types/media';
 
 export default function MediaPage() {
   const { data, isLoading, create, update } = useMedia();
   const { data: properties } = useProperties();
+  const { data: reports } = useReports();
   const addToast = useUIStore((s) => s.addToast);
   const [isModalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Media | undefined>();
@@ -30,17 +32,20 @@ export default function MediaPage() {
 
   const handleSave = async (formData: {
     propertyId: string;
-    type: string;
+    type: 'Image' | 'Document' | 'Video';
+    reportId: string;
     propertyName: string;
+    reportName: string;
+    parish: string;
     fileName: string;
     fileUrl: string;
     uploadDate: string;
   }) => {
     if (editing) {
-      await update(editing.id, formData);
+      await update(editing.id, { ...formData, thumbnailUrl: '' });
       addToast('Media updated successfully', 'success');
     } else {
-      await create(formData);
+      await create({ ...formData, thumbnailUrl: '' });
       addToast('Media uploaded successfully', 'success');
     }
   };
@@ -109,6 +114,7 @@ export default function MediaPage() {
         onClose={() => setModalOpen(false)}
         media={editing}
         properties={properties}
+        reports={reports}
         onSave={handleSave}
       />
     </>

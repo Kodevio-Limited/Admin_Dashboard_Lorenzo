@@ -29,7 +29,19 @@ export default function PropertiesPage() {
     setModalOpen(true);
   };
 
-  const handleSave = async (formData: { name: string; location: string; clientId: string; clientName: string }) => {
+  const handleSave = async (formData: {
+    name: string;
+    parish: string;
+    gpsCoordinates?: string;
+    propertyType: 'Residential' | 'Commercial' | 'Vacant Land' | 'Industrial' | 'Mixed Use';
+    clientId: string;
+    clientName: string;
+    servicePlan: 'Premium' | 'Standard' | 'Basic';
+    assignedFieldRep: string;
+    nextVisitDate?: string;
+    reportStatus: 'Up to Date' | 'Pending' | 'Overdue' | 'Not Started';
+    notes?: string;
+  }) => {
     if (editing) {
       await update(editing.id, formData);
       addToast('Property updated successfully', 'success');

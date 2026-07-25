@@ -20,7 +20,7 @@ export default function Header() {
       <div className="flex items-center justify-between px-8 pt-[16px] pb-[12px]">
         <div className="flex flex-col items-start gap-[2px]">
           <h1 className="text-[20px] font-medium text-white leading-[1.3]">
-            Good Morning Matt
+            Good Morning, Nexus Admin
           </h1>
           <span className="text-[13px] font-normal text-white/70 leading-[1.3]">
             {dateStr}
@@ -43,7 +43,7 @@ export default function Header() {
                 fontWeight: 500,
               }}
             >
-              Sarah Jessie
+              Nexus Admin
             </span>
             <span
               className="text-dark-100 leading-[1.2]"
@@ -53,7 +53,7 @@ export default function Header() {
                 fontWeight: 500,
               }}
             >
-              Sarah@gmail.com
+              admin@nexusproperty.com
             </span>
           </div>
         </div>

@@ -33,10 +33,15 @@ export default function ReportsPage() {
 
   const handleSave = async (formData: {
     title: string;
+    status: 'Draft' | 'Submitted' | 'Under Review' | 'Approved' | 'Rejected';
+    visitDate: string;
+    parish: string;
     propertyId: string;
     clientId: string;
     propertyName: string;
     clientName: string;
+    assignedFieldRep: string;
+    reviewedStatus: 'Reviewed' | 'Unreviewed';
     uploadDate: string;
     fileName?: string;
   }) => {

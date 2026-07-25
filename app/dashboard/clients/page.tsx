@@ -27,12 +27,12 @@ export default function ClientsPage() {
     setModalOpen(true);
   };
 
-  const handleSave = async (formData: { name: string; email: string }) => {
+  const handleSave = async (formData: { name: string; email: string; phone: string; whatsapp?: string; country: string; servicePlan: 'Premium' | 'Standard' | 'Basic'; status: 'Active' | 'Inactive' | 'Pending'; notes?: string }) => {
     if (editing) {
-      await update(editing.id, formData);
+      await update(editing.id, { ...formData, assignedPropertyIds: editing.assignedPropertyIds });
       addToast('Client updated successfully', 'success');
     } else {
-      await create(formData);
+      await create({ ...formData, assignedPropertyIds: [] });
       addToast('Client created successfully', 'success');
     }
   };

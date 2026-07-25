@@ -1,4 +1,5 @@
 import Sidebar from '@/components/layout/Sidebar';
+import PreviewBanner from '@/components/layout/PreviewBanner';
 import Toast from '@/components/layout/Toast';
 
 export default function DashboardLayout({
@@ -10,6 +11,7 @@ export default function DashboardLayout({
     <div className="flex h-screen overflow-hidden bg-bg text-white">
       <Sidebar />
       <main className="flex-1 overflow-y-auto bg-bg scrollbar-thin">
+        <PreviewBanner />
         {children}
       </main>
       <Toast />
