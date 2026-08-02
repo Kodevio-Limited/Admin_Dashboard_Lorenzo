@@ -91,7 +91,7 @@ const initialProperties: Property[] = [
   {
     id: 'p7',
     name: 'Rose Hall Conference Centre',
-    parish: 'Montego Bay',
+    parish: 'St. James',
     gpsCoordinates: '18.5088° N, 77.8920° W',
     propertyType: 'Commercial',
     clientId: clients[4].id,
@@ -105,7 +105,7 @@ const initialProperties: Property[] = [
   {
     id: 'p8',
     name: 'Rose Hall Staff Quarters',
-    parish: 'Montego Bay',
+    parish: 'St. James',
     gpsCoordinates: '18.5095° N, 77.8932° W',
     propertyType: 'Residential',
     clientId: clients[4].id,
@@ -133,7 +133,7 @@ const initialProperties: Property[] = [
   {
     id: 'p10',
     name: 'YS Falls Eco Guest House',
-    parish: 'Manchester',
+    parish: 'St. Elizabeth',
     gpsCoordinates: '18.1029° N, 77.5817° W',
     propertyType: 'Commercial',
     clientId: clients[6].id,

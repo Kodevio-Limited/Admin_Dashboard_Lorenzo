@@ -82,7 +82,7 @@ const initialClients: Client[] = [
     country: 'Jamaica',
     servicePlan: 'Standard',
     status: 'Pending',
-    notes: 'Eco-tourism property in Manchester. Awaiting initial inspection sign-off.',
+    notes: 'Eco-tourism property in St. Elizabeth. Awaiting initial inspection sign-off.',
     assignedPropertyIds: ['p10'],
   },
   {

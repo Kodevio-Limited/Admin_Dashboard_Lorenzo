@@ -6,6 +6,7 @@ import DataTable from '@/components/shared/DataTable';
 import { reportColumns } from '@/components/reports/report-table-config';
 import ReportModal from '@/components/reports/ReportModal';
 import Header from '@/components/layout/Header';
+import DemoTag from '@/components/shared/DemoTag';
 import { Button } from '@/components/shared/Button';
 import { useReports } from '@/hooks/useReports';
 import { useProperties } from '@/hooks/useProperties';
@@ -59,7 +60,10 @@ export default function ReportsPage() {
       <Header />
       <div className="px-8 pt-[50px] pb-[14px] flex items-end justify-between">
         <div className="flex flex-col items-start gap-[10px]">
-          <h2 className="text-[24px] font-medium text-white leading-[1.3]">Reports</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-[24px] font-medium text-white leading-[1.3]">Reports</h2>
+            <DemoTag />
+          </div>
           <span className="text-[14px] font-normal text-white/70 leading-[1.3]">
             Manage your reports and their details.
           </span>

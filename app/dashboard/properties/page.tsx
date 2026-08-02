@@ -6,6 +6,7 @@ import DataTable from '@/components/shared/DataTable';
 import { propertyColumns } from '@/components/properties/property-table-config';
 import PropertyModal from '@/components/properties/PropertyModal';
 import Header from '@/components/layout/Header';
+import DemoTag from '@/components/shared/DemoTag';
 import { Button } from '@/components/shared/Button';
 import { useProperties } from '@/hooks/useProperties';
 import { useClients } from '@/hooks/useClients';
@@ -56,7 +57,10 @@ export default function PropertiesPage() {
       <Header />
       <div className="px-8 pt-[50px] pb-[14px] flex items-end justify-between">
         <div className="flex flex-col items-start gap-[10px]">
-          <h2 className="text-[24px] font-medium text-white leading-[1.3]">Properties</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-[24px] font-medium text-white leading-[1.3]">Properties</h2>
+            <DemoTag />
+          </div>
           <span className="text-[14px] font-normal text-white/70 leading-[1.3]">
             Manage your properties and their details.
           </span>

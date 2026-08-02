@@ -1,7 +1,5 @@
 'use client';
 
-import Image from 'next/image';
-
 export default function Header() {
   const today = new Date();
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -27,13 +25,13 @@ export default function Header() {
           </span>
         </div>
         <div className="flex items-center gap-[10px]">
-          <Image
-            src="/assets/avatar.png"
-            alt="Admin avatar"
-            width={42}
-            height={42}
-            className="rounded-full object-cover"
-          />
+          <div
+            className="w-[42px] h-[42px] rounded-full flex items-center justify-center text-bg text-[15px] font-bold shrink-0"
+            style={{ background: 'linear-gradient(180deg, #FCE688 0%, #D1A736 50%, #946E18 100%)' }}
+            aria-label="Nexus Admin avatar"
+          >
+            NA
+          </div>
           <div className="flex flex-col gap-[2px]">
             <span
               className="text-white leading-[1.2]"
@@ -53,7 +51,7 @@ export default function Header() {
                 fontWeight: 500,
               }}
             >
-              admin@nexusproperty.com
+              info@nexuspbs.net
             </span>
           </div>
         </div>

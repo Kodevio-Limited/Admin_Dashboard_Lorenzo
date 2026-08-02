@@ -27,8 +27,8 @@ export default function ProfileForm() {
     defaultValues: {
       firstName: 'Nexus',
       lastName: 'Admin',
-      email: 'admin@nexusproperty.com',
-      phone: '+1 (876) 555-0199',
+      email: 'info@nexuspbs.net',
+      phone: '(561) 639-8772',
     },
   });
 
