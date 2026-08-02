@@ -61,7 +61,11 @@ export default function Sidebar() {
                 alt=""
                 width={18}
                 height={18}
-                className={active ? 'brightness-0 invert-[0]' : 'opacity-40'}
+                className={
+                  active
+                    ? 'brightness-0 invert sepia-[0.3] saturate-[2] hue-rotate-[350deg] drop-shadow-[0_0_3px_rgba(255,255,255,0.85)]'
+                    : 'brightness-0 sepia saturate-[6] hue-rotate-[5deg] drop-shadow-[0_0_4px_rgba(251,191,36,0.65)]'
+                }
                 aria-hidden="true"
               />
               <span>{item.label}</span>
