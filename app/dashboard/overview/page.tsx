@@ -141,31 +141,31 @@ export default function OverviewPage() {
   return (
     <>
       <Header />
-      <div className="px-8 pt-[50px] pb-[14px]">
-        <div className="flex flex-col items-start gap-[10px]">
-          <h2 className="text-[24px] font-medium text-white leading-[1.3]">Dashboard Overview</h2>
-          <span className="text-[14px] font-normal text-white/70 leading-[1.3]">
-            Nexus Property & Business Services — operational KPIs at a glance.
+      <div className="px-4 sm:px-6 lg:px-8 pt-8 sm:pt-[50px] pb-3 sm:pb-[14px]">
+        <div className="flex flex-col items-start gap-2 sm:gap-[10px]">
+          <h2 className="text-[20px] sm:text-[24px] font-medium text-white leading-[1.3]">Dashboard Overview</h2>
+          <span className="text-[12px] sm:text-[14px] font-normal text-white/70 leading-[1.3]">
+            Nexus Property &amp; Business Services — operational KPIs at a glance.
           </span>
         </div>
       </div>
-      <div className="px-6 pb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div className="px-4 sm:px-6 pb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
           {kpis.map((kpi) => (
             <div
               key={kpi.label}
-              className="bg-dark-600 rounded-[8px] p-5 flex items-start gap-4 border border-dark-400"
+              className="bg-dark-600 rounded-[8px] p-4 sm:p-5 flex items-start gap-3 sm:gap-4 border border-dark-400"
             >
               {kpi.icon}
               <div>
-                <p className="text-[13px] font-medium text-dark-200 leading-[1.3]">{kpi.label}</p>
-                <p className="text-[32px] font-bold text-white leading-[1.1] mt-1">{kpi.value}</p>
+                <p className="text-[12px] sm:text-[13px] font-medium text-dark-200 leading-[1.3]">{kpi.label}</p>
+                <p className="text-[26px] sm:text-[32px] font-bold text-white leading-[1.1] mt-1">{kpi.value}</p>
               </div>
             </div>
           ))}
         </div>
-        <div className="mt-8">
-          <h3 className="text-[18px] font-medium text-white leading-[1.3] mb-4">Recent Reports</h3>
+        <div className="mt-6 sm:mt-8">
+          <h3 className="text-[16px] sm:text-[18px] font-medium text-white leading-[1.3] mb-3 sm:mb-4">Recent Reports</h3>
           <DataTable
             data={recentReports}
             columns={recentColumns}

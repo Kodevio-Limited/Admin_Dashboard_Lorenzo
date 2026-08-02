@@ -5,7 +5,12 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { NAV_ITEMS } from '@/lib/constants';
 
-export default function Sidebar() {
+interface SidebarProps {
+  mobileClassName?: string;
+  onClose?: () => void;
+}
+
+export default function Sidebar({ mobileClassName, onClose }: SidebarProps) {
   const pathname = usePathname();
 
   const isActive = (href: string) => {
@@ -17,11 +22,24 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="w-[260px] bg-dark-600 flex flex-col shrink-0 h-screen overflow-y-auto"
-      style={{ borderRadius: '16px' }}
+      className={`w-[260px] bg-dark-600 flex flex-col shrink-0 h-screen max-h-full overflow-y-auto ${mobileClassName ?? ''}`}
+      style={{ borderRadius: mobileClassName ? '0 16px 16px 0' : '16px' }}
     >
-      <div className="flex flex-col items-center pt-[32px] pb-0">
-        <Link href="/">
+      {onClose && (
+        <div className="flex justify-end px-4 pt-4">
+          <button
+            onClick={onClose}
+            className="text-dark-200 hover:text-white transition-colors p-1"
+            aria-label="Close sidebar"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+      <div className="flex flex-col items-center pt-4 sm:pt-8 pb-0">
+        <Link href="/" onClick={onClose}>
           <Image
             src="/assets/sidebar-logo.png"
             alt="Logo"
@@ -29,8 +47,7 @@ export default function Sidebar() {
             height={218}
             priority
             unoptimized
-            className="object-contain"
-            style={{ width: '145px', height: '218px' }}
+            className="object-contain w-[100px] h-[150px] sm:w-[120px] sm:h-[180px] md:w-[145px] md:h-[218px]"
           />
         </Link>
       </div>
@@ -42,6 +59,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onClose}
               className={`flex items-center gap-[10px] px-[14px] py-[8px] text-[14px] leading-[1.3] transition-colors ${
                 active
                   ? 'text-bg font-medium rounded-[4px]'
