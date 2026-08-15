@@ -1,32 +1,32 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import type { Client } from '@/types/client';
-import { getClients, createClient, updateClient } from '@/lib/mock-data/clients';
+import {
+  useGetClients,
+  useGetClientById,
+  useCreateClient,
+  useUpdateClient,
+} from '@/hooks/api/useClients';
+import type { CreateClientInput, UpdateClientInput } from '@/types/client';
+
+export {
+  useGetClients,
+  useGetClientById,
+  useCreateClient,
+  useUpdateClient,
+};
 
 export function useClients() {
-  const [data, setData] = useState<Client[]>(getClients);
-  const [isLoading, setIsLoading] = useState(false);
+  const query = useGetClients();
+  const createMutation = useCreateClient();
+  const updateMutation = useUpdateClient();
 
-  const refresh = useCallback(() => {
-    setData(getClients());
-  }, []);
-
-  const create = useCallback(async (input: Omit<Client, 'id'>) => {
-    setIsLoading(true);
-    const client = createClient(input);
-    refresh();
-    setIsLoading(false);
-    return client;
-  }, [refresh]);
-
-  const update = useCallback(async (id: string, input: Omit<Client, 'id'>) => {
-    setIsLoading(true);
-    const client = updateClient(id, input);
-    refresh();
-    setIsLoading(false);
-    return client;
-  }, [refresh]);
-
-  return { data, isLoading, create, update };
+  return {
+    data: query.data || [],
+    isLoading: query.isLoading,
+    isError: query.isError,
+    error: query.error,
+    create: (input: CreateClientInput) => createMutation.mutateAsync(input),
+    update: (id: number | string, input: UpdateClientInput) =>
+      updateMutation.mutateAsync({ id, data: input }),
+  };
 }

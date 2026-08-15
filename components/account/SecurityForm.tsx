@@ -5,36 +5,49 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Input } from '@/components/shared/Input';
 import { Button } from '@/components/shared/Button';
-import { useUIStore } from '@/store/uiStore';
+import { useChangePassword } from '@/hooks/api/useAuth';
 
 const securitySchema = z
   .object({
     currentPassword: z.string().min(1, 'Current password is required'),
-    newPassword: z.string().min(8, 'Password must be at least 8 characters'),
+    newPassword: z.string().min(8, 'New password must be at least 8 characters'),
     confirmPassword: z.string().min(1, 'Please confirm your password'),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
+  })
+  .refine((data) => data.currentPassword !== data.newPassword, {
+    message: 'New password must be different from current password',
+    path: ['newPassword'],
   });
 
 type SecurityFormData = z.infer<typeof securitySchema>;
 
 export default function SecurityForm() {
-  const addToast = useUIStore((s) => s.addToast);
+  const changePasswordMutation = useChangePassword();
+
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SecurityFormData>({
     resolver: zodResolver(securitySchema),
   });
 
-  const onSubmit = async () => {
-    await new Promise((r) => setTimeout(r, 500));
-    addToast('Password updated successfully', 'success');
-    reset();
+  const onSubmit = (data: SecurityFormData) => {
+    changePasswordMutation.mutate(
+      {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      },
+      {
+        onSuccess: () => {
+          reset();
+        },
+      }
+    );
   };
 
   return (
@@ -57,8 +70,8 @@ export default function SecurityForm() {
         error={errors.confirmPassword?.message}
         {...register('confirmPassword')}
       />
-      <Button variant="gold" type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Updating...' : 'Update Password'}
+      <Button variant="gold" type="submit" disabled={changePasswordMutation.isPending}>
+        {changePasswordMutation.isPending ? 'Updating Password...' : 'Update Password'}
       </Button>
     </form>
   );

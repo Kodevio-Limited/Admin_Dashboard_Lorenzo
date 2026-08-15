@@ -3,6 +3,7 @@ import type { Client } from '@/types/client';
 const initialClients: Client[] = [
   {
     id: 'c1',
+    firstName: 'Mystic Ridge Resort',
     name: 'Mystic Ridge Resort',
     email: 'info@mysticridge.com',
     phone: '+1 (876) 957-4300',
@@ -15,6 +16,7 @@ const initialClients: Client[] = [
   },
   {
     id: 'c2',
+    firstName: 'Tryall Club Jamaica',
     name: 'Tryall Club Jamaica',
     email: 'reservations@tryallclub.com',
     phone: '+1 (876) 956-5660',
@@ -27,6 +29,7 @@ const initialClients: Client[] = [
   },
   {
     id: 'c3',
+    firstName: 'Sandals Negril',
     name: 'Sandals Negril',
     email: 'negril@sandals.com',
     phone: '+1 (876) 957-5216',
@@ -39,6 +42,7 @@ const initialClients: Client[] = [
   },
   {
     id: 'c4',
+    firstName: 'Kings House Properties',
     name: 'Kings House Properties',
     email: 'admin@kingshouse.com',
     phone: '+1 (876) 922-2650',
@@ -51,6 +55,7 @@ const initialClients: Client[] = [
   },
   {
     id: 'c5',
+    firstName: 'Rose Hall Developments',
     name: 'Rose Hall Developments',
     email: 'info@rosehall.com',
     phone: '+1 (876) 953-2323',
@@ -63,6 +68,7 @@ const initialClients: Client[] = [
   },
   {
     id: 'c6',
+    firstName: 'Prospect Plantation Estate',
     name: 'Prospect Plantation Estate',
     email: 'contact@prospectplantation.com',
     phone: '+1 (876) 954-0101',
@@ -75,6 +81,7 @@ const initialClients: Client[] = [
   },
   {
     id: 'c7',
+    firstName: 'YS Falls Eco Retreat',
     name: 'YS Falls Eco Retreat',
     email: 'hello@ysfallsretreat.com',
     phone: '+1 (876) 997-6360',
@@ -87,6 +94,7 @@ const initialClients: Client[] = [
   },
   {
     id: 'c8',
+    firstName: 'Portmore Commercial Group',
     name: 'Portmore Commercial Group',
     email: 'info@portmorecommercial.com',
     phone: '+1 (876) 748-3344',
@@ -114,7 +122,7 @@ export function createClient(data: Omit<Client, 'id'>): Client {
   return client;
 }
 
-export function updateClient(id: string, data: Omit<Client, 'id'>): Client | null {
+export function updateClient(id: string | number, data: Omit<Client, 'id'>): Client | null {
   const index = clients.findIndex((c) => c.id === id);
   if (index === -1) return null;
   clients[index] = { id, ...data };

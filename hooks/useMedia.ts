@@ -1,32 +1,36 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import type { Media } from '@/types/media';
-import { getMedia, createMedia, updateMedia } from '@/lib/mock-data/media';
+import {
+  useGetMedia,
+  useGetMediaById,
+  useCreateMedia,
+  useUpdateMedia,
+  useDeleteMedia,
+} from '@/hooks/api/useMedia';
+import type { CreateMediaInput, UpdateMediaInput } from '@/types/media';
+
+export {
+  useGetMedia,
+  useGetMediaById,
+  useCreateMedia,
+  useUpdateMedia,
+  useDeleteMedia,
+};
 
 export function useMedia() {
-  const [data, setData] = useState<Media[]>(getMedia);
-  const [isLoading, setIsLoading] = useState(false);
+  const query = useGetMedia();
+  const createMutation = useCreateMedia();
+  const updateMutation = useUpdateMedia();
+  const deleteMutation = useDeleteMedia();
 
-  const refresh = useCallback(() => {
-    setData(getMedia());
-  }, []);
-
-  const create = useCallback(async (input: Omit<Media, 'id'>) => {
-    setIsLoading(true);
-    const media = createMedia(input);
-    refresh();
-    setIsLoading(false);
-    return media;
-  }, [refresh]);
-
-  const update = useCallback(async (id: string, input: Omit<Media, 'id'>) => {
-    setIsLoading(true);
-    const media = updateMedia(id, input);
-    refresh();
-    setIsLoading(false);
-    return media;
-  }, [refresh]);
-
-  return { data, isLoading, create, update };
+  return {
+    data: query.data || [],
+    isLoading: query.isLoading,
+    isError: query.isError,
+    error: query.error,
+    create: (input: CreateMediaInput) => createMutation.mutateAsync(input),
+    update: (id: number | string, input: UpdateMediaInput) =>
+      updateMutation.mutateAsync({ id, data: input }),
+    remove: (id: number | string) => deleteMutation.mutateAsync(id),
+  };
 }

@@ -3,12 +3,9 @@
 import type { ReactNode } from 'react';
 import Header from '@/components/layout/Header';
 import DataTable from '@/components/shared/DataTable';
-import { useClients } from '@/hooks/useClients';
-import { useProperties } from '@/hooks/useProperties';
-import { useReports } from '@/hooks/useReports';
-import { formatDate } from '@/lib/utils';
-import type { ColumnDef } from '@/components/shared/DataTable';
-import type { Report } from '@/types/report';
+import { useGetOverview } from '@/hooks/api/useDashboard';
+import { useGetReports } from '@/hooks/api/useReports';
+import { reportColumns } from '@/components/reports/report-table-config';
 
 function Icon({ children }: { children: ReactNode }) {
   return (
@@ -59,84 +56,34 @@ const CalendarIcon = (
   </Icon>
 );
 
-const HardHatIcon = (
-  <Icon>
-    <path d="M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1z" />
-    <path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5" />
-    <path d="M4 15v-3a6 6 0 0 1 6-6" />
-    <path d="M14 6a6 6 0 0 1 6 6v3" />
-  </Icon>
-);
-
-const AlertIcon = (
-  <Icon>
-    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-    <line x1="12" y1="9" x2="12" y2="13" />
-    <line x1="12" y1="17" x2="12.01" y2="17" />
-  </Icon>
-);
-
-const FileTextIcon = (
-  <Icon>
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-    <polyline points="14 2 14 8 20 8" />
-    <line x1="16" y1="13" x2="8" y2="13" />
-    <line x1="16" y1="17" x2="8" y2="17" />
-    <polyline points="10 9 9 9 8 9" />
-  </Icon>
-);
-
-const recentColumns: ColumnDef<Report>[] = [
-  { key: 'title', header: 'Report' },
-  { key: 'parish', header: 'Parish' },
-  { key: 'propertyName', header: 'Property' },
-  { key: 'assignedFieldRep', header: 'Field Rep' },
-  {
-    key: 'visitDate',
-    header: 'Visit Date',
-    render: (row) => formatDate(row.visitDate),
-  },
-  { key: 'status', header: 'Status' },
-  {
-    key: 'reviewedStatus',
-    header: 'Review',
-  },
-];
-
 export default function OverviewPage() {
-  const { data: clients } = useClients();
-  const { data: properties } = useProperties();
-  const { data: reports } = useReports();
-
-  const activeClients = clients.filter((c) => c.status === 'Active').length;
-  const totalProperties = properties.length;
-  const reportsPending = reports.filter((r) => r.status === 'Draft' || r.status === 'Submitted').length;
-  const reportsAwaitingReview = reports.filter((r) => r.reviewedStatus === 'Unreviewed').length;
-  const fieldReps = new Set(properties.map((p) => p.assignedFieldRep)).size;
-  const urgentIssues = properties.filter((p) => p.reportStatus === 'Overdue').length;
-
-  const today = new Date();
-  const nextWeek = new Date(today);
-  nextWeek.setDate(nextWeek.getDate() + 7);
-  const visitsDue = properties.filter((p) => {
-    if (!p.nextVisitDate) return false;
-    const visitDate = new Date(p.nextVisitDate);
-    return visitDate >= today && visitDate <= nextWeek;
-  }).length;
-
-  const recentReports = [...reports]
-    .sort((a, b) => new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime())
-    .slice(0, 6);
+  const { data: overview, isLoading: isOverviewLoading, isError, error } = useGetOverview();
+  const { data: reports = [], isLoading: isReportsLoading } = useGetReports();
 
   const kpis = [
-    { label: 'Active Clients', value: activeClients, icon: UsersIcon },
-    { label: 'Properties Monitored', value: totalProperties, icon: BuildingIcon },
-    { label: 'Reports Pending', value: reportsPending, icon: ClipboardIcon },
-    { label: 'Visits Due This Week', value: visitsDue, icon: CalendarIcon },
-    { label: 'Field Reps Assigned', value: fieldReps, icon: HardHatIcon },
-    { label: 'Urgent Issues', value: urgentIssues, icon: AlertIcon },
-    { label: 'Reports Awaiting Review', value: reportsAwaitingReview, icon: FileTextIcon },
+    {
+      label: 'Total Clients',
+      value: overview?.totalClients ?? 0,
+      icon: UsersIcon,
+    },
+    {
+      label: 'Total Properties',
+      value: overview?.totalProperties ?? 0,
+      icon: BuildingIcon,
+    },
+    {
+      label: 'Total Reports',
+      value: overview?.totalReports ?? 0,
+      icon: ClipboardIcon,
+    },
+    {
+      label: 'Upcoming Visits',
+      value: overview?.upComingVisits ?? 0,
+      icon: CalendarIcon,
+    },
   ];
+
+  const recentReports = reports.slice(0, 5);
 
   return (
     <>
@@ -145,12 +92,19 @@ export default function OverviewPage() {
         <div className="flex flex-col items-start gap-2 sm:gap-[10px]">
           <h2 className="text-[20px] sm:text-[24px] font-medium text-white leading-[1.3]">Dashboard Overview</h2>
           <span className="text-[12px] sm:text-[14px] font-normal text-white/70 leading-[1.3]">
-            Nexus Property &amp; Business Services — operational KPIs at a glance.
+            Nexus Property &amp; Business Services — live system metrics from backend.
           </span>
         </div>
       </div>
+
       <div className="px-4 sm:px-6 pb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+        {isError && (
+          <div className="mb-4 p-4 bg-red-950/40 border border-red-800/50 rounded text-red-400 text-sm">
+            Failed to load overview data: {error?.message || 'Unknown error'}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {kpis.map((kpi) => (
             <div
               key={kpi.label}
@@ -159,17 +113,21 @@ export default function OverviewPage() {
               {kpi.icon}
               <div>
                 <p className="text-[12px] sm:text-[13px] font-medium text-dark-200 leading-[1.3]">{kpi.label}</p>
-                <p className="text-[26px] sm:text-[32px] font-bold text-white leading-[1.1] mt-1">{kpi.value}</p>
+                <p className="text-[26px] sm:text-[32px] font-bold text-white leading-[1.1] mt-1">
+                  {isOverviewLoading ? '...' : kpi.value}
+                </p>
               </div>
             </div>
           ))}
         </div>
+
         <div className="mt-6 sm:mt-8">
-          <h3 className="text-[16px] sm:text-[18px] font-medium text-white leading-[1.3] mb-3 sm:mb-4">Recent Reports</h3>
+          <h3 className="text-[16px] sm:text-[18px] font-medium text-white leading-[1.3] mb-3 sm:mb-4">Recent Inspection Reports</h3>
           <DataTable
             data={recentReports}
-            columns={recentColumns}
-            emptyMessage="No reports yet."
+            columns={reportColumns}
+            isLoading={isReportsLoading}
+            emptyMessage="No reports found."
           />
         </div>
       </div>

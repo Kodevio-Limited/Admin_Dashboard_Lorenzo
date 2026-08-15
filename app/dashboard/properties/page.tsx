@@ -6,49 +6,51 @@ import DataTable from '@/components/shared/DataTable';
 import { propertyColumns } from '@/components/properties/property-table-config';
 import PropertyModal from '@/components/properties/PropertyModal';
 import Header from '@/components/layout/Header';
-import DemoTag from '@/components/shared/DemoTag';
 import { Button } from '@/components/shared/Button';
-import { useProperties } from '@/hooks/useProperties';
-import { useClients } from '@/hooks/useClients';
+import { useGetProperties, useCreateProperty, useUpdateProperty } from '@/hooks/api/useProperties';
+import { useGetClients } from '@/hooks/api/useClients';
 import { useUIStore } from '@/store/uiStore';
-import type { Property } from '@/types/property';
+import type { Property, CreatePropertyInput } from '@/types/property';
 
 export default function PropertiesPage() {
-  const { data, isLoading, create, update } = useProperties();
-  const { data: clients } = useClients();
   const addToast = useUIStore((s) => s.addToast);
+
+  // TanStack Query Hooks
+  const { data: properties = [], isLoading, isError, error } = useGetProperties();
+  const { data: clients = [] } = useGetClients();
+
+  const createPropertyMutation = useCreateProperty();
+  const updatePropertyMutation = useUpdateProperty();
+
   const [isModalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Property | undefined>();
+  const [editingProperty, setEditingProperty] = useState<Property | undefined>();
 
   const handleEdit = (property: Property) => {
-    setEditing(property);
+    setEditingProperty(property);
     setModalOpen(true);
   };
 
   const handleAdd = () => {
-    setEditing(undefined);
+    setEditingProperty(undefined);
     setModalOpen(true);
   };
 
-  const handleSave = async (formData: {
-    name: string;
-    parish: string;
-    gpsCoordinates?: string;
-    propertyType: 'Residential' | 'Commercial' | 'Vacant Land' | 'Industrial' | 'Mixed Use';
-    clientId: string;
-    clientName: string;
-    servicePlan: 'Premium' | 'Standard' | 'Basic';
-    assignedFieldRep: string;
-    nextVisitDate?: string;
-    reportStatus: 'Up to Date' | 'Pending' | 'Overdue' | 'Not Started';
-    notes?: string;
-  }) => {
-    if (editing) {
-      await update(editing.id, formData);
-      addToast('Property updated successfully', 'success');
-    } else {
-      await create(formData);
-      addToast('Property created successfully', 'success');
+  const handleSave = async (payload: CreatePropertyInput) => {
+    try {
+      if (editingProperty) {
+        await updatePropertyMutation.mutateAsync({
+          id: editingProperty.id,
+          data: payload,
+        });
+        addToast('Property updated successfully', 'success');
+      } else {
+        await createPropertyMutation.mutateAsync(payload);
+        addToast('Property created successfully', 'success');
+      }
+      setModalOpen(false);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Operation failed';
+      addToast(errorMessage, 'error');
     }
   };
 
@@ -59,7 +61,6 @@ export default function PropertiesPage() {
         <div className="flex flex-col items-start gap-[10px]">
           <div className="flex items-center gap-3">
             <h2 className="text-[24px] font-medium text-white leading-[1.3]">Properties</h2>
-            <DemoTag />
           </div>
           <span className="text-[14px] font-normal text-white/70 leading-[1.3]">
             Manage your properties and their details.
@@ -74,21 +75,30 @@ export default function PropertiesPage() {
           Add Property
         </Button>
       </div>
+
       <div className="px-6">
+        {isError && (
+          <div className="mb-4 p-4 bg-red-950/40 border border-red-800/50 rounded text-red-400 text-sm">
+            Failed to load properties: {error?.message || 'Unknown error'}
+          </div>
+        )}
+
         <DataTable
-          data={data}
+          data={properties}
           columns={propertyColumns}
           isLoading={isLoading}
-          emptyMessage="No properties yet. Add your first property."
+          emptyMessage="No properties found. Click 'Add Property' to create one."
           actions={{ onEdit: handleEdit }}
         />
       </div>
+
       <PropertyModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
-        property={editing}
+        property={editingProperty}
         clients={clients}
         onSave={handleSave}
+        isLoading={createPropertyMutation.isPending || updatePropertyMutation.isPending}
       />
     </>
   );

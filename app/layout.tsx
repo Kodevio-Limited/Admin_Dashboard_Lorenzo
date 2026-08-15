@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import QueryProvider from "@/components/providers/query-provider";
+import AuthGuard from "@/components/providers/auth-guard";
 import "./globals.css";
 
 const inter = Inter({
@@ -19,8 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.className} h-full`}>
       <body className="min-h-full bg-dark-bg text-dark-text antialiased">
-        {children}
+        <QueryProvider>
+          <AuthGuard>{children}</AuthGuard>
+        </QueryProvider>
       </body>
     </html>
   );
 }
+

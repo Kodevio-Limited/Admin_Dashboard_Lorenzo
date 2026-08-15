@@ -4,10 +4,9 @@ export const NAV_ITEMS = [
   { label: 'Properties', href: '/dashboard/properties', icon: '/assets/icons/properties-icon.svg' },
   { label: 'Service Plans', href: '/dashboard/service-plans', icon: '/assets/icons/service-plans-icon.svg' },
   { label: 'Reports', href: '/dashboard/reports', icon: '/assets/icons/reports-icon.svg' },
-  { label: 'Report Approvals', href: '/dashboard/report-approvals', icon: '/assets/icons/report-approvals-icon.svg' },
   { label: 'Media', href: '/dashboard/media', icon: '/assets/icons/media-icon.svg' },
+  { label: 'Contact Requests', href: '/dashboard/contact-requests', icon: '/assets/icons/report-approvals-icon.svg' },
   { label: 'Notifications', href: '/dashboard/notifications', icon: '/assets/icons/notifications-icon.svg' },
-  { label: 'Activity History', href: '/dashboard/activity', icon: '/assets/icons/activity-icon.svg' },
   { label: 'User Account', href: '/dashboard/account/profile', icon: '/assets/icons/user-accounts-icon.svg' },
 ] as const;
 

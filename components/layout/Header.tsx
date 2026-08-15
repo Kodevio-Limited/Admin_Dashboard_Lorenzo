@@ -18,7 +18,7 @@ export default function Header() {
   const toggleMobileSidebar = useUIStore((s) => s.toggleMobileSidebar);
 
   return (
-    <div className="bg-dark-600">
+    <div className="bg-dark-600 mt-12 border-b border-dark-500/50">
       <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 pt-4 pb-3 gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <button
@@ -41,38 +41,42 @@ export default function Header() {
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-2 sm:gap-[10px] shrink-0">
-          <div
-            className="w-[34px] h-[34px] sm:w-[42px] sm:h-[42px] rounded-full flex items-center justify-center text-bg text-[13px] sm:text-[15px] font-bold shrink-0"
-            style={{ background: 'linear-gradient(180deg, #FCE688 0%, #D1A736 50%, #946E18 100%)' }}
-            aria-label="Nexus Admin avatar"
-          >
-            NA
-          </div>
-          <div className="hidden sm:flex flex-col gap-[2px] min-w-0">
-            <span
-              className="text-white leading-[1.2] truncate"
-              style={{
-                fontFamily: 'Satoshi, Helvetica Neue, Arial, sans-serif',
-                fontSize: '15px',
-                fontWeight: 500,
-              }}
+
+        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-[10px]">
+            <div
+              className="w-[34px] h-[34px] sm:w-[42px] sm:h-[42px] rounded-full flex items-center justify-center text-bg text-[13px] sm:text-[15px] font-bold shrink-0"
+              style={{ background: 'linear-gradient(180deg, #FCE688 0%, #D1A736 50%, #946E18 100%)' }}
+              aria-label="Nexus Admin avatar"
             >
-              Nexus Admin
-            </span>
-            <span
-              className="text-dark-100 leading-[1.2] truncate max-w-[160px]"
-              style={{
-                fontFamily: 'Satoshi, Helvetica Neue, Arial, sans-serif',
-                fontSize: '11px',
-                fontWeight: 500,
-              }}
-            >
-              info@nexuspbs.net
-            </span>
+              NA
+            </div>
+            <div className="hidden sm:flex flex-col gap-[2px] min-w-0">
+              <span
+                className="text-white leading-[1.2] truncate"
+                style={{
+                  fontFamily: 'Satoshi, Helvetica Neue, Arial, sans-serif',
+                  fontSize: '15px',
+                  fontWeight: 500,
+                }}
+              >
+                Nexus Admin
+              </span>
+              <span
+                className="text-dark-100 leading-[1.2] truncate max-w-[160px]"
+                style={{
+                  fontFamily: 'Satoshi, Helvetica Neue, Arial, sans-serif',
+                  fontSize: '11px',
+                  fontWeight: 500,
+                }}
+              >
+                info@nexuspbs.net
+              </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+

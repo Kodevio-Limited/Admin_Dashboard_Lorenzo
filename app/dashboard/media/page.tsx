@@ -6,76 +6,54 @@ import MediaCard from '@/components/media/MediaCard';
 import MediaModal from '@/components/media/MediaModal';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/shared/Button';
-import { useMedia } from '@/hooks/useMedia';
-import { useProperties } from '@/hooks/useProperties';
-import { useReports } from '@/hooks/useReports';
+import { useGetMedia, useCreateMedia, useUpdateMedia } from '@/hooks/api/useMedia';
+import { useGetProperties } from '@/hooks/api/useProperties';
+import { useGetReports } from '@/hooks/api/useReports';
 import { useUIStore } from '@/store/uiStore';
-import type { Media } from '@/types/media';
+import type { Media, CreateMediaInput } from '@/types/media';
 
 export default function MediaPage() {
-  const { data, isLoading, create, update } = useMedia();
-  const { data: properties } = useProperties();
-  const { data: reports } = useReports();
   const addToast = useUIStore((s) => s.addToast);
+
+  // TanStack Query Hooks
+  const { data: mediaItems = [], isLoading, isError, error } = useGetMedia();
+  const { data: properties = [] } = useGetProperties();
+  const { data: reports = [] } = useGetReports();
+
+  const createMediaMutation = useCreateMedia();
+  const updateMediaMutation = useUpdateMedia();
+
   const [isModalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Media | undefined>();
+  const [editingMedia, setEditingMedia] = useState<Media | undefined>();
 
   const handleEdit = (media: Media) => {
-    setEditing(media);
+    setEditingMedia(media);
     setModalOpen(true);
   };
 
   const handleAdd = () => {
-    setEditing(undefined);
+    setEditingMedia(undefined);
     setModalOpen(true);
   };
 
-  const handleSave = async (formData: {
-    propertyId: string;
-    type: 'Image' | 'Document' | 'Video';
-    reportId: string;
-    propertyName: string;
-    reportName: string;
-    parish: string;
-    fileName: string;
-    fileUrl: string;
-    uploadDate: string;
-  }) => {
-    if (editing) {
-      await update(editing.id, { ...formData, thumbnailUrl: '' });
-      addToast('Media updated successfully', 'success');
-    } else {
-      await create({ ...formData, thumbnailUrl: '' });
-      addToast('Media uploaded successfully', 'success');
+  const handleSave = async (payload: CreateMediaInput) => {
+    try {
+      if (editingMedia) {
+        await updateMediaMutation.mutateAsync({
+          id: editingMedia.id,
+          data: payload,
+        });
+        addToast('Media updated successfully', 'success');
+      } else {
+        await createMediaMutation.mutateAsync(payload);
+        addToast('Media uploaded successfully', 'success');
+      }
+      setModalOpen(false);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Operation failed';
+      addToast(errorMessage, 'error');
     }
   };
-
-  if (isLoading) {
-    return (
-      <>
-        <Header />
-        <div className="px-8 pt-[50px] pb-[14px] flex items-end justify-between">
-          <div className="flex flex-col items-start gap-[10px]">
-            <h2 className="text-[24px] font-medium text-white leading-[1.3]">Media</h2>
-            <span className="text-[14px] font-normal text-white/70 leading-[1.3]">
-              Manage your media files.
-            </span>
-          </div>
-        </div>
-        <div className="px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-dark-500 rounded-lg overflow-hidden border border-dark-400 animate-pulse">
-              <div className="aspect-[4/3] bg-bg" />
-              <div className="p-3 space-y-2">
-                <div className="h-4 bg-dark-400 rounded w-3/4" />
-                <div className="h-3 bg-dark-400 rounded w-1/2" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
@@ -84,7 +62,7 @@ export default function MediaPage() {
         <div className="flex flex-col items-start gap-[10px]">
           <h2 className="text-[24px] font-medium text-white leading-[1.3]">Media</h2>
           <span className="text-[14px] font-normal text-white/70 leading-[1.3]">
-            Manage your media files.
+            Manage property inspection photos, videos, and document attachments.
           </span>
         </div>
         <Button
@@ -96,26 +74,47 @@ export default function MediaPage() {
           Upload Media
         </Button>
       </div>
+
       <div className="px-6">
-        {data.length === 0 ? (
+        {isError && (
+          <div className="mb-4 p-4 bg-red-950/40 border border-red-800/50 rounded text-red-400 text-sm">
+            Failed to load media items: {error?.message || 'Unknown error'}
+          </div>
+        )}
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-dark-500 rounded-lg overflow-hidden border border-dark-400 animate-pulse">
+                <div className="aspect-[4/3] bg-bg" />
+                <div className="p-3 space-y-2">
+                  <div className="h-4 bg-dark-400 rounded w-3/4" />
+                  <div className="h-3 bg-dark-400 rounded w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : mediaItems.length === 0 ? (
           <div className="text-center py-12 text-dark-200">
-            No media yet. Upload your first media item.
+            No media found. Click 'Upload Media' to attach media to a property report.
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {data.map((item) => (
+            {mediaItems.map((item) => (
               <MediaCard key={item.id} media={item} onEdit={handleEdit} />
             ))}
           </div>
         )}
       </div>
+
       <MediaModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
-        media={editing}
+        media={editingMedia}
         properties={properties}
         reports={reports}
         onSave={handleSave}
+        isLoading={createMediaMutation.isPending || updateMediaMutation.isPending}
       />
     </>
   );

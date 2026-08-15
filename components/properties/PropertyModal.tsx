@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -7,67 +8,128 @@ import Modal from '@/components/shared/Modal';
 import { Input } from '@/components/shared/Input';
 import { Select } from '@/components/shared/Select';
 import { Button } from '@/components/shared/Button';
-import type { Property } from '@/types/property';
+import type { Property, PropertyType, ReportSubmissionStatus, PropertyServicePlanType, CreatePropertyInput } from '@/types/property';
 import type { Client } from '@/types/client';
 
 const propertySchema = z.object({
-  name: z.string().min(1, 'Property name is required'),
-  parish: z.string().min(1, 'Parish is required'),
-  gpsCoordinates: z.string().optional(),
-  propertyType: z.enum(['Residential', 'Commercial', 'Vacant Land', 'Industrial', 'Mixed Use']),
   clientId: z.string().min(1, 'Client is required'),
-  servicePlan: z.enum(['Premium', 'Standard', 'Basic']),
-  assignedFieldRep: z.string().min(1, 'Field rep is required'),
-  nextVisitDate: z.string().optional(),
-  reportStatus: z.enum(['Up to Date', 'Pending', 'Overdue', 'Not Started']),
-  notes: z.string().optional(),
+  name: z.string().min(2, 'Property name must be at least 2 characters'),
+  parish: z.string().optional(),
+  city: z.string().optional(),
+  gpsCoordinates: z.string().optional(),
+  type: z.enum(['RESIDENTIAL', 'COMMERCIAL', 'VACANT_LAND', 'INDUSTRIAL', 'MIXED_USED', 'OTHER']),
+  fieldRep: z.string().min(2, 'Field rep is required'),
+  nextVisitDate: z.string().min(1, 'Next visit date is required'),
+  reportSubmissionStatus: z.enum(['UPTODATE', 'PENDING', 'OVERDUE', 'NOTSTARTED']).optional(),
+  servicePlanType: z.enum(['BASIC', 'STANDARD', 'PREMIUM']),
+  note: z.string().optional(),
 });
 
-type PropertyFormData = z.infer<typeof propertySchema>;
+export type PropertyFormValues = z.infer<typeof propertySchema>;
 
 interface PropertyModalProps {
   isOpen: boolean;
   onClose: () => void;
   property?: Property;
   clients: Client[];
-  onSave: (data: PropertyFormData & { clientName: string }) => Promise<void>;
+  onSave: (data: CreatePropertyInput) => Promise<void>;
+  isLoading?: boolean;
 }
 
 const PARISHES = [
-  'St. Ann', 'Trelawny', 'Kingston', 'Montego Bay',
-  'Hanover', 'Westmoreland', 'Manchester', 'St. Catherine',
+  'Kingston', 'St. Andrew', 'St. Catherine', 'Clarendon', 'Manchester',
+  'St. Elizabeth', 'Westmoreland', 'Hanover', 'St. James', 'Trelawny',
+  'St. Ann', 'St. Mary', 'Portland', 'St. Thomas',
 ];
 
-const FIELD_REPS = ['Owen Reid', 'Kareem James', 'Shane Gordon', 'Tanya Samuels'];
+const FIELD_REPS = ['John Doe', 'Owen Reid', 'Kareem James', 'Shane Gordon', 'Tanya Samuels'];
 
-export default function PropertyModal({ isOpen, onClose, property, clients, onSave }: PropertyModalProps) {
+function normalizeType(type?: string): 'RESIDENTIAL' | 'COMMERCIAL' | 'VACANT_LAND' | 'INDUSTRIAL' | 'MIXED_USED' | 'OTHER' {
+  if (type === 'Residential' || type === 'RESIDENTIAL') return 'RESIDENTIAL';
+  if (type === 'Commercial' || type === 'COMMERCIAL') return 'COMMERCIAL';
+  if (type === 'Vacant Land' || type === 'VACANT_LAND') return 'VACANT_LAND';
+  if (type === 'Industrial' || type === 'INDUSTRIAL') return 'INDUSTRIAL';
+  if (type === 'Mixed Use' || type === 'MIXED_USED') return 'MIXED_USED';
+  return 'OTHER';
+}
+
+function normalizeReportStatus(status?: string | null): 'UPTODATE' | 'PENDING' | 'OVERDUE' | 'NOTSTARTED' {
+  if (status === 'Up to Date' || status === 'UPTODATE') return 'UPTODATE';
+  if (status === 'Overdue' || status === 'OVERDUE') return 'OVERDUE';
+  if (status === 'Not Started' || status === 'NOTSTARTED') return 'NOTSTARTED';
+  return 'PENDING';
+}
+
+function normalizePlan(plan?: string | null): 'BASIC' | 'STANDARD' | 'PREMIUM' {
+  if (plan === 'PREMIUM' || plan === 'Premium' || plan === 'PRO') return 'PREMIUM';
+  if (plan === 'STANDARD' || plan === 'Standard') return 'STANDARD';
+  return 'BASIC';
+}
+
+export default function PropertyModal({
+  isOpen,
+  onClose,
+  property,
+  clients,
+  onSave,
+  isLoading = false,
+}: PropertyModalProps) {
+  const getFormDefaults = (p?: Property): PropertyFormValues => {
+    let dateStr = '';
+    if (p?.nextVisitDate) {
+      dateStr = new Date(p.nextVisitDate).toISOString().split('T')[0];
+    }
+
+    return {
+      clientId: p?.clientId !== undefined ? String(p.clientId) : '',
+      name: p?.name || '',
+      parish: p?.parish || 'Kingston',
+      city: p?.city || 'Kingston',
+      gpsCoordinates: p?.gpsCoordinates || '',
+      type: normalizeType(p?.type || p?.propertyType),
+      fieldRep: p?.fieldRep || p?.assignedFieldRep || '',
+      nextVisitDate: dateStr,
+      reportSubmissionStatus: normalizeReportStatus(p?.reportSubmissionStatus || p?.reportStatus),
+      servicePlanType: normalizePlan(p?.servicePlantype || p?.servicePlanType || p?.servicePlan),
+      note: p?.note || p?.notes || '',
+    };
+  };
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<PropertyFormData>({
+  } = useForm<PropertyFormValues>({
     resolver: zodResolver(propertySchema),
-    defaultValues: {
-      name: property?.name || '',
-      parish: property?.parish || '',
-      gpsCoordinates: property?.gpsCoordinates || '',
-      propertyType: property?.propertyType || 'Commercial',
-      clientId: property?.clientId || '',
-      servicePlan: property?.servicePlan || 'Standard',
-      assignedFieldRep: property?.assignedFieldRep || '',
-      nextVisitDate: property?.nextVisitDate || '',
-      reportStatus: property?.reportStatus || 'Not Started',
-      notes: property?.notes || '',
-    },
+    defaultValues: getFormDefaults(property),
   });
 
-  const onSubmit = async (data: PropertyFormData) => {
-    const client = clients.find((c) => c.id === data.clientId);
-    await onSave({
-      ...data,
-      clientName: client?.name || '',
-    });
+  useEffect(() => {
+    if (isOpen) {
+      reset(getFormDefaults(property));
+    }
+  }, [isOpen, property, reset]);
+
+  const onSubmit = async (data: PropertyFormValues) => {
+    const nextVisitDateISO = new Date(data.nextVisitDate).toISOString();
+
+    const cleanPayload: CreatePropertyInput = {
+      clientId: parseInt(data.clientId, 10),
+      name: data.name,
+      type: data.type,
+      fieldRep: data.fieldRep,
+      nextVisitDate: nextVisitDateISO,
+      servicePlanType: data.servicePlanType,
+    };
+
+    if (data.parish && data.parish.trim() !== '') cleanPayload.parish = data.parish;
+    if (data.city && data.city.trim() !== '') cleanPayload.city = data.city;
+    if (data.gpsCoordinates && data.gpsCoordinates.trim() !== '') cleanPayload.gpsCoordinates = data.gpsCoordinates;
+    if (data.reportSubmissionStatus) cleanPayload.reportSubmissionStatus = data.reportSubmissionStatus;
+    if (data.note && data.note.trim() !== '') cleanPayload.note = data.note;
+
+    await onSave(cleanPayload);
     reset();
     onClose();
   };
@@ -77,6 +139,8 @@ export default function PropertyModal({ isOpen, onClose, property, clients, onSa
     onClose();
   };
 
+  const isPending = isSubmitting || isLoading;
+
   return (
     <Modal
       isOpen={isOpen}
@@ -85,18 +149,31 @@ export default function PropertyModal({ isOpen, onClose, property, clients, onSa
       size="lg"
       footer={
         <>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={handleClose} disabled={isPending}>
             Cancel
           </Button>
-          <Button variant="gold" form="property-form" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Saving...' : 'Save'}
+          <Button variant="gold" form="property-form" type="submit" disabled={isPending}>
+            {isPending ? 'Saving...' : 'Save'}
           </Button>
         </>
       }
     >
       <form id="property-form" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="grid grid-cols-2 gap-4">
-          <Input label="Property Name" error={errors.name?.message} {...register('name')} />
+          <Input label="Property Name *" error={errors.name?.message} {...register('name')} />
+          <Select
+            label="Assigned Client *"
+            placeholder="Select a client"
+            options={clients.map((c) => ({
+              value: String(c.id),
+              label: [c.firstName, c.lastName].filter(Boolean).join(' ') || c.name || c.email,
+            }))}
+            error={errors.clientId?.message}
+            {...register('clientId')}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
           <Select
             label="Parish"
             placeholder="Select parish"
@@ -104,65 +181,61 @@ export default function PropertyModal({ isOpen, onClose, property, clients, onSa
             error={errors.parish?.message}
             {...register('parish')}
           />
+          <Input label="City" placeholder="Kingston" error={errors.city?.message} {...register('city')} />
         </div>
+
         <div className="grid grid-cols-2 gap-4">
-          <Input label="GPS Coordinates" error={errors.gpsCoordinates?.message} {...register('gpsCoordinates')} />
+          <Input label="GPS Coordinates" placeholder="18.0179,-76.8099" error={errors.gpsCoordinates?.message} {...register('gpsCoordinates')} />
           <Select
-            label="Property Type"
+            label="Property Type *"
             options={[
-              { value: 'Residential', label: 'Residential' },
-              { value: 'Commercial', label: 'Commercial' },
-              { value: 'Vacant Land', label: 'Vacant Land' },
-              { value: 'Industrial', label: 'Industrial' },
-              { value: 'Mixed Use', label: 'Mixed Use' },
+              { value: 'RESIDENTIAL', label: 'Residential' },
+              { value: 'COMMERCIAL', label: 'Commercial' },
+              { value: 'VACANT_LAND', label: 'Vacant Land' },
+              { value: 'INDUSTRIAL', label: 'Industrial' },
+              { value: 'MIXED_USED', label: 'Mixed Used' },
+              { value: 'OTHER', label: 'Other' },
             ]}
-            error={errors.propertyType?.message}
-            {...register('propertyType')}
+            error={errors.type?.message}
+            {...register('type')}
           />
         </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            label="Assigned Field Rep *"
+            placeholder="Enter field rep name"
+            error={errors.fieldRep?.message}
+            {...register('fieldRep')}
+          />
+          <Input label="Next Visit Date *" type="date" error={errors.nextVisitDate?.message} {...register('nextVisitDate')} />
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           <Select
-            label="Assigned Client"
-            placeholder="Select a client"
-            options={clients.map((c) => ({ value: c.id, label: c.name }))}
-            error={errors.clientId?.message}
-            {...register('clientId')}
-          />
-          <Select
-            label="Service Plan"
+            label="Report Submission Status"
             options={[
-              { value: 'Premium', label: 'Premium' },
-              { value: 'Standard', label: 'Standard' },
-              { value: 'Basic', label: 'Basic' },
+              { value: 'PENDING', label: 'Pending' },
+              { value: 'UPTODATE', label: 'Up to Date' },
+              { value: 'OVERDUE', label: 'Overdue' },
+              { value: 'NOTSTARTED', label: 'Not Started' },
             ]}
-            error={errors.servicePlan?.message}
-            {...register('servicePlan')}
+            error={errors.reportSubmissionStatus?.message}
+            {...register('reportSubmissionStatus')}
           />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
           <Select
-            label="Assigned Field Rep"
-            placeholder="Select field rep"
-            options={FIELD_REPS.map((r) => ({ value: r, label: r }))}
-            error={errors.assignedFieldRep?.message}
-            {...register('assignedFieldRep')}
-          />
-          <Input label="Next Visit Date" type="date" error={errors.nextVisitDate?.message} {...register('nextVisitDate')} />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <Select
-            label="Report Status"
+            label="Service Plan Type *"
             options={[
-              { value: 'Up to Date', label: 'Up to Date' },
-              { value: 'Pending', label: 'Pending' },
-              { value: 'Overdue', label: 'Overdue' },
-              { value: 'Not Started', label: 'Not Started' },
+              { value: 'BASIC', label: 'BASIC' },
+              { value: 'STANDARD', label: 'STANDARD' },
+              { value: 'PREMIUM', label: 'PREMIUM' },
             ]}
-            error={errors.reportStatus?.message}
-            {...register('reportStatus')}
+            error={errors.servicePlanType?.message}
+            {...register('servicePlanType')}
           />
         </div>
-        <Input label="Notes" error={errors.notes?.message} {...register('notes')} />
+
+        <Input label="Property Note" error={errors.note?.message} {...register('note')} />
       </form>
     </Modal>
   );

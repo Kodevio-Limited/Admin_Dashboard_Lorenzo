@@ -1,32 +1,32 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import type { Property } from '@/types/property';
-import { getProperties, createProperty, updateProperty } from '@/lib/mock-data/properties';
+import {
+  useGetProperties,
+  useGetPropertyById,
+  useCreateProperty,
+  useUpdateProperty,
+} from '@/hooks/api/useProperties';
+import type { CreatePropertyInput, UpdatePropertyInput } from '@/types/property';
+
+export {
+  useGetProperties,
+  useGetPropertyById,
+  useCreateProperty,
+  useUpdateProperty,
+};
 
 export function useProperties() {
-  const [data, setData] = useState<Property[]>(getProperties);
-  const [isLoading, setIsLoading] = useState(false);
+  const query = useGetProperties();
+  const createMutation = useCreateProperty();
+  const updateMutation = useUpdateProperty();
 
-  const refresh = useCallback(() => {
-    setData(getProperties());
-  }, []);
-
-  const create = useCallback(async (input: Omit<Property, 'id'>) => {
-    setIsLoading(true);
-    const property = createProperty(input);
-    refresh();
-    setIsLoading(false);
-    return property;
-  }, [refresh]);
-
-  const update = useCallback(async (id: string, input: Omit<Property, 'id'>) => {
-    setIsLoading(true);
-    const property = updateProperty(id, input);
-    refresh();
-    setIsLoading(false);
-    return property;
-  }, [refresh]);
-
-  return { data, isLoading, create, update };
+  return {
+    data: query.data || [],
+    isLoading: query.isLoading,
+    isError: query.isError,
+    error: query.error,
+    create: (input: CreatePropertyInput) => createMutation.mutateAsync(input),
+    update: (id: number | string, input: UpdatePropertyInput) =>
+      updateMutation.mutateAsync({ id, data: input }),
+  };
 }

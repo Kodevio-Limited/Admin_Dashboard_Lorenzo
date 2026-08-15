@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import Sidebar from '@/components/layout/Sidebar';
-import PreviewBanner from '@/components/layout/PreviewBanner';
 import Toast from '@/components/layout/Toast';
 import { useUIStore } from '@/store/uiStore';
 
@@ -45,7 +44,6 @@ export default function DashboardLayout({
         </div>
       )}
       <main className="flex-1 overflow-y-auto bg-bg scrollbar-thin">
-        <PreviewBanner />
         {children}
       </main>
       <Toast />

@@ -6,52 +6,53 @@ import DataTable from '@/components/shared/DataTable';
 import { reportColumns } from '@/components/reports/report-table-config';
 import ReportModal from '@/components/reports/ReportModal';
 import Header from '@/components/layout/Header';
-import DemoTag from '@/components/shared/DemoTag';
 import { Button } from '@/components/shared/Button';
-import { useReports } from '@/hooks/useReports';
-import { useProperties } from '@/hooks/useProperties';
-import { useClients } from '@/hooks/useClients';
+import { useGetReports, useCreateReport, useUpdateReport } from '@/hooks/api/useReports';
+import { useGetProperties } from '@/hooks/api/useProperties';
+import { useGetClients } from '@/hooks/api/useClients';
 import { useUIStore } from '@/store/uiStore';
-import type { Report } from '@/types/report';
+import type { Report, CreateReportInput } from '@/types/report';
 
 export default function ReportsPage() {
-  const { data, isLoading, create, update } = useReports();
-  const { data: properties } = useProperties();
-  const { data: clients } = useClients();
   const addToast = useUIStore((s) => s.addToast);
+
+  // TanStack Query Hooks
+  const { data: reports = [], isLoading, isError, error } = useGetReports();
+  const { data: properties = [] } = useGetProperties();
+  const { data: clients = [] } = useGetClients();
+
+  const createReportMutation = useCreateReport();
+  const updateReportMutation = useUpdateReport();
+
   const [isModalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Report | undefined>();
+  const [editingReport, setEditingReport] = useState<Report | undefined>();
 
   const handleEdit = (report: Report) => {
-    setEditing(report);
+    setEditingReport(report);
     setModalOpen(true);
   };
 
   const handleAdd = () => {
-    setEditing(undefined);
+    setEditingReport(undefined);
     setModalOpen(true);
   };
 
-  const handleSave = async (formData: {
-    title: string;
-    status: 'Draft' | 'Submitted' | 'Under Review' | 'Approved' | 'Rejected';
-    visitDate: string;
-    parish: string;
-    propertyId: string;
-    clientId: string;
-    propertyName: string;
-    clientName: string;
-    assignedFieldRep: string;
-    reviewedStatus: 'Reviewed' | 'Unreviewed';
-    uploadDate: string;
-    fileName?: string;
-  }) => {
-    if (editing) {
-      await update(editing.id, formData);
-      addToast('Report updated successfully', 'success');
-    } else {
-      await create(formData);
-      addToast('Report created successfully', 'success');
+  const handleSave = async (payload: CreateReportInput) => {
+    try {
+      if (editingReport) {
+        await updateReportMutation.mutateAsync({
+          id: editingReport.id,
+          data: payload,
+        });
+        addToast('Report updated successfully', 'success');
+      } else {
+        await createReportMutation.mutateAsync(payload);
+        addToast('Report created successfully', 'success');
+      }
+      setModalOpen(false);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Operation failed';
+      addToast(errorMessage, 'error');
     }
   };
 
@@ -62,10 +63,9 @@ export default function ReportsPage() {
         <div className="flex flex-col items-start gap-[10px]">
           <div className="flex items-center gap-3">
             <h2 className="text-[24px] font-medium text-white leading-[1.3]">Reports</h2>
-            <DemoTag />
           </div>
           <span className="text-[14px] font-normal text-white/70 leading-[1.3]">
-            Manage your reports and their details.
+            Manage inspection reports and PDF documents.
           </span>
         </div>
         <Button
@@ -77,22 +77,31 @@ export default function ReportsPage() {
           Add Report
         </Button>
       </div>
+
       <div className="px-6">
+        {isError && (
+          <div className="mb-4 p-4 bg-red-950/40 border border-red-800/50 rounded text-red-400 text-sm">
+            Failed to load reports: {error?.message || 'Unknown error'}
+          </div>
+        )}
+
         <DataTable
-          data={data}
+          data={reports}
           columns={reportColumns}
           isLoading={isLoading}
-          emptyMessage="No reports yet. Add your first report."
+          emptyMessage="No reports found. Click 'Add Report' to create and upload one."
           actions={{ onEdit: handleEdit }}
         />
       </div>
+
       <ReportModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
-        report={editing}
+        report={editingReport}
         properties={properties}
         clients={clients}
         onSave={handleSave}
+        isLoading={createReportMutation.isPending || updateReportMutation.isPending}
       />
     </>
   );
