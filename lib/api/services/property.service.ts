@@ -49,4 +49,19 @@ export const propertyService = {
     const response = await apiClient.patch<ApiResponse<Property>>(`/properties/${id}`, payload);
     return response.data.data;
   },
+
+  /**
+   * Delete / Soft Delete property status
+   * DELETE /api/v1/properties/:id?status=ARCHIVED|INACTIVE
+   * Role: ADMIN
+   */
+  deleteProperty: async (
+    id: number | string,
+    status?: string
+  ): Promise<Property> => {
+    const url = status ? `/properties/${id}?status=${status}` : `/properties/${id}`;
+    const response = await apiClient.delete<ApiResponse<Property>>(url);
+    return response.data.data;
+  },
 };
+

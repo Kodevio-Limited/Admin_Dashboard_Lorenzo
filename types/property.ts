@@ -1,3 +1,11 @@
+export type PropertyStatus =
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'ARCHIVED'
+  | 'Active'
+  | 'Inactive'
+  | 'Archived';
+
 export type PropertyType =
   | 'RESIDENTIAL'
   | 'COMMERCIAL'
@@ -54,6 +62,7 @@ export interface Property {
   servicePlantype?: PropertyServicePlanType;
   servicePlanType?: PropertyServicePlanType;
   servicePlan?: PropertyServicePlanType;
+  status?: PropertyStatus | null;
   note?: string | null;
   notes?: string | null;
   client?: PropertyClientInfo | null;
@@ -73,6 +82,7 @@ export interface CreatePropertyInput {
   nextVisitDate: string;
   reportSubmissionStatus?: ReportSubmissionStatus;
   servicePlanType: PropertyServicePlanType;
+  status?: PropertyStatus;
   note?: string;
 }
 
@@ -87,5 +97,7 @@ export interface UpdatePropertyInput {
   nextVisitDate?: string;
   reportSubmissionStatus?: ReportSubmissionStatus;
   servicePlanType?: PropertyServicePlanType;
+  status?: PropertyStatus;
   note?: string;
 }
+

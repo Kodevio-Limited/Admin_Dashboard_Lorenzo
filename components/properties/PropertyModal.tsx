@@ -22,6 +22,7 @@ const propertySchema = z.object({
   nextVisitDate: z.string().min(1, 'Next visit date is required'),
   reportSubmissionStatus: z.enum(['UPTODATE', 'PENDING', 'OVERDUE', 'NOTSTARTED']).optional(),
   servicePlanType: z.enum(['BASIC', 'STANDARD', 'PREMIUM']),
+  status: z.enum(['ACTIVE', 'INACTIVE', 'ARCHIVED']),
   note: z.string().optional(),
 });
 
@@ -66,6 +67,12 @@ function normalizePlan(plan?: string | null): 'BASIC' | 'STANDARD' | 'PREMIUM' {
   return 'BASIC';
 }
 
+function normalizePropertyStatus(status?: string | null): 'ACTIVE' | 'INACTIVE' | 'ARCHIVED' {
+  if (status === 'INACTIVE' || status === 'Inactive') return 'INACTIVE';
+  if (status === 'ARCHIVED' || status === 'Archived') return 'ARCHIVED';
+  return 'ACTIVE';
+}
+
 export default function PropertyModal({
   isOpen,
   onClose,
@@ -91,6 +98,7 @@ export default function PropertyModal({
       nextVisitDate: dateStr,
       reportSubmissionStatus: normalizeReportStatus(p?.reportSubmissionStatus || p?.reportStatus),
       servicePlanType: normalizePlan(p?.servicePlantype || p?.servicePlanType || p?.servicePlan),
+      status: normalizePropertyStatus(p?.status),
       note: p?.note || p?.notes || '',
     };
   };
@@ -121,6 +129,7 @@ export default function PropertyModal({
       fieldRep: data.fieldRep,
       nextVisitDate: nextVisitDateISO,
       servicePlanType: data.servicePlanType,
+      status: data.status,
     };
 
     if (data.parish && data.parish.trim() !== '') cleanPayload.parish = data.parish;
@@ -211,7 +220,7 @@ export default function PropertyModal({
           <Input label="Next Visit Date *" type="date" error={errors.nextVisitDate?.message} {...register('nextVisitDate')} />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <Select
             label="Report Submission Status"
             options={[
@@ -233,6 +242,16 @@ export default function PropertyModal({
             error={errors.servicePlanType?.message}
             {...register('servicePlanType')}
           />
+          <Select
+            label="Property Status *"
+            options={[
+              { value: 'ACTIVE', label: 'Active' },
+              { value: 'INACTIVE', label: 'Inactive' },
+              { value: 'ARCHIVED', label: 'Archived' },
+            ]}
+            error={errors.status?.message}
+            {...register('status')}
+          />
         </div>
 
         <Input label="Property Note" error={errors.note?.message} {...register('note')} />
@@ -240,3 +259,4 @@ export default function PropertyModal({
     </Modal>
   );
 }
+

@@ -87,4 +87,27 @@ export const propertyColumns: ColumnDef<Property>[] = [
       );
     },
   },
+  {
+    key: 'status',
+    header: 'Property Status',
+    sortable: true,
+    render: (p) => {
+      const st = p.status || 'ACTIVE';
+      const upper = String(st).toUpperCase();
+      return (
+        <span
+          className={`inline-block px-2 py-0.5 text-xs font-semibold rounded ${
+            upper === 'ACTIVE'
+              ? 'bg-emerald-900/40 text-emerald-400 border border-emerald-800/40'
+              : upper === 'INACTIVE'
+              ? 'bg-amber-900/40 text-amber-400 border border-amber-800/40'
+              : 'bg-red-900/40 text-red-400 border border-red-800/40'
+          }`}
+        >
+          {upper}
+        </span>
+      );
+    },
+  },
 ];
+
