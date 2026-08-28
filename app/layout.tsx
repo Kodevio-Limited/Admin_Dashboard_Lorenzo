@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import QueryProvider from "@/components/providers/query-provider";
 import AuthGuard from "@/components/providers/auth-guard";
+import Toast from "@/components/layout/Toast";
 import "./globals.css";
 
 const inter = Inter({
@@ -23,6 +24,7 @@ export default function RootLayout({
       <body className="min-h-full bg-dark-bg text-dark-text antialiased">
         <QueryProvider>
           <AuthGuard>{children}</AuthGuard>
+          <Toast />
         </QueryProvider>
       </body>
     </html>

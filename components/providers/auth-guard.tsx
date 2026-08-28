@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 
-const PUBLIC_ROUTES = ['/login', '/forgot-password', '/reset-password'];
+const PUBLIC_ROUTES = ['/login', '/forgot-password', '/reset-password', '/reset-login', '/set-new-pass'];
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ interface AuthGuardProps {
 export default function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, isInitialized, initializeAuth } = useAuthStore();
+  const { isAuthenticated, isInitialized, role, initializeAuth, clearAuth } = useAuthStore();
 
   useEffect(() => {
     initializeAuth();
@@ -24,12 +24,19 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
     const isPublicRoute = PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
 
+    // If authenticated but not ADMIN, immediately clear auth and redirect to login
+    if (isAuthenticated && role && role !== 'ADMIN') {
+      clearAuth();
+      router.replace('/login');
+      return;
+    }
+
     if (!isAuthenticated && !isPublicRoute) {
       router.replace('/login');
     } else if (isAuthenticated && isPublicRoute) {
       router.replace('/dashboard/overview');
     }
-  }, [isAuthenticated, isInitialized, pathname, router]);
+  }, [isAuthenticated, isInitialized, role, pathname, router, clearAuth]);
 
   // Show smooth dark loading screen while auth state is initializing
   if (!isInitialized) {
@@ -45,7 +52,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
   // Prevent rendering protected content before redirecting
   const isPublicRoute = PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
-  if (!isAuthenticated && !isPublicRoute) {
+  if ((!isAuthenticated || (role && role !== 'ADMIN')) && !isPublicRoute) {
     return null;
   }
 

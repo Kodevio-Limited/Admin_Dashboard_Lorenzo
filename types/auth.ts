@@ -6,11 +6,13 @@ export interface LoginInput {
 export interface LoginData {
   userId: number;
   accessToken: string;
+  role?: string;
 }
 
 export interface RefreshTokenData {
   userId: number;
   accessToken: string;
+  role?: string;
 }
 
 export interface ForgotPasswordInput {

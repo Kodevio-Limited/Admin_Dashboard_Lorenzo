@@ -3,8 +3,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/lib/api/services/auth.service';
+import { userService } from '@/lib/api/services/user.service';
 import { useAuthStore } from '@/store/authStore';
 import { useUIStore } from '@/store/uiStore';
+import { extractRoleFromToken } from '@/lib/jwt';
 import type {
   LoginInput,
   ForgotPasswordInput,
@@ -13,16 +15,50 @@ import type {
 } from '@/types/auth';
 
 /**
- * Hook for User Login
+ * Hook for User Login with Admin Role Verification
  */
 export function useLogin() {
   const router = useRouter();
   const setAuth = useAuthStore((s) => s.setAuth);
+  const clearAuth = useAuthStore((s) => s.clearAuth);
   const addToast = useUIStore((s) => s.addToast);
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: LoginInput) => authService.login(payload),
+    mutationFn: async (payload: LoginInput) => {
+      const data = await authService.login(payload);
+
+      let role = data.role || extractRoleFromToken(data.accessToken);
+
+      // If role is not directly inside JWT, verify by calling getSelfProfile
+      if (!role) {
+        try {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('accessToken', data.accessToken);
+          }
+          const profile = await userService.getSelfProfile();
+          role = profile.role ? profile.role.toUpperCase() : null;
+        } catch {
+          // If profile fetch fails, role remains null
+        }
+      }
+
+      if (role && role.toUpperCase() !== 'ADMIN') {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('userRole');
+        }
+        try {
+          await authService.logout();
+        } catch {
+          // ignore logout error
+        }
+        throw new Error('Access Denied: Only administrators have access to this portal.');
+      }
+
+      return { ...data, role: role || 'ADMIN' };
+    },
     onSuccess: (data) => {
       setAuth(data);
       addToast('Logged in successfully', 'success');
@@ -30,6 +66,7 @@ export function useLogin() {
       router.push('/dashboard/overview');
     },
     onError: (error: Error) => {
+      clearAuth();
       addToast(error.message || 'Login failed. Please check your credentials.', 'error');
     },
   });

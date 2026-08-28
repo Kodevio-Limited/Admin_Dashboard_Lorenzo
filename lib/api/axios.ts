@@ -1,5 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/store/authStore';
+import { extractRoleFromToken } from '@/lib/jwt';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -48,7 +49,7 @@ export async function refreshAuthToken(): Promise<string> {
   const refreshResponse = await axios.post<{
     success: boolean;
     message: string;
-    data: { userId: number; accessToken: string };
+    data: { userId: number; accessToken: string; role?: string };
   }>(`${BASE_URL}/auth/refresh-token`, {}, { withCredentials: true });
 
   const newAccessToken = refreshResponse.data?.data?.accessToken;
@@ -58,7 +59,12 @@ export async function refreshAuthToken(): Promise<string> {
     throw new Error('Failed to refresh token');
   }
 
-  useAuthStore.getState().setAuth({ userId, accessToken: newAccessToken });
+  const role = refreshResponse.data?.data?.role || extractRoleFromToken(newAccessToken);
+  if (role && role.toUpperCase() !== 'ADMIN') {
+    throw new Error('Access denied: Admin role required');
+  }
+
+  useAuthStore.getState().setAuth({ userId, accessToken: newAccessToken, role });
   return newAccessToken;
 }
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useUIStore } from '@/store/uiStore';
+import { useGetSelfProfile } from '@/hooks/api/useUser';
 
 export default function Header() {
   const today = new Date();
@@ -16,14 +17,26 @@ export default function Header() {
   const dateStr = `${dayName}, ${day} ${month} ${year}`;
 
   const toggleMobileSidebar = useUIStore((s) => s.toggleMobileSidebar);
+  const { data: profile } = useGetSelfProfile();
+
+  const adminName = profile?.firstName
+    ? `${profile.firstName} ${profile.lastName || ''}`.trim()
+    : 'Nexus Admin';
+
+  const adminEmail = profile?.email || 'info@nexuspbs.net';
+
+  const initials = profile?.firstName
+    ? `${profile.firstName[0]}${profile.lastName ? profile.lastName[0] : ''}`.toUpperCase()
+    : 'NA';
 
   return (
-    <div className="bg-dark-600 mt-12 border-b border-dark-500/50">
-      <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 pt-4 pb-3 gap-3">
+    <header className="bg-[#141414] border-b border-dark-400/40 sticky top-0 z-30 backdrop-blur-md">
+      <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3.5 gap-3">
+        {/* Left Side: Mobile toggle & Greeting */}
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={toggleMobileSidebar}
-            className="lg:hidden text-white hover:text-amber-300 transition-colors p-1.5 -ml-1.5"
+            className="lg:hidden text-dark-200 hover:text-white transition-colors p-1.5 -ml-1.5 rounded-lg hover:bg-white/5"
             aria-label="Toggle sidebar"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -32,51 +45,38 @@ export default function Header() {
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
+
           <div className="flex flex-col items-start gap-0.5 min-w-0">
-            <h1 className="text-[16px] sm:text-[20px] font-medium text-white leading-[1.3] truncate">
-              Good Morning, Nexus Admin
+            <h1 className="text-base sm:text-lg lg:text-xl font-semibold text-white leading-tight truncate">
+              Welcome, {adminName}
             </h1>
-            <span className="text-[11px] sm:text-[13px] font-normal text-white/70 leading-[1.3] truncate max-w-[200px] sm:max-w-none">
+            <span className="text-xs text-dark-200 font-normal leading-tight truncate">
               {dateStr}
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-          <div className="flex items-center gap-2 sm:gap-[10px]">
+        {/* Right Side: Admin Profile Avatar */}
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 bg-[#1E1E1E]/80 border border-dark-400/50 rounded-full py-1.5 px-2.5 sm:px-3">
             <div
-              className="w-[34px] h-[34px] sm:w-[42px] sm:h-[42px] rounded-full flex items-center justify-center text-bg text-[13px] sm:text-[15px] font-bold shrink-0"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-[#1A1100] text-xs sm:text-sm font-bold shrink-0 shadow-sm shadow-amber-500/20"
               style={{ background: 'linear-gradient(180deg, #FCE688 0%, #D1A736 50%, #946E18 100%)' }}
-              aria-label="Nexus Admin avatar"
+              aria-label="Admin Avatar"
             >
-              NA
+              {initials}
             </div>
-            <div className="hidden sm:flex flex-col gap-[2px] min-w-0">
-              <span
-                className="text-white leading-[1.2] truncate"
-                style={{
-                  fontFamily: 'Satoshi, Helvetica Neue, Arial, sans-serif',
-                  fontSize: '15px',
-                  fontWeight: 500,
-                }}
-              >
-                Nexus Admin
+            <div className="hidden sm:flex flex-col min-w-0 text-left pr-1">
+              <span className="text-[13px] font-medium text-white leading-snug truncate max-w-[140px]">
+                {adminName}
               </span>
-              <span
-                className="text-dark-100 leading-[1.2] truncate max-w-[160px]"
-                style={{
-                  fontFamily: 'Satoshi, Helvetica Neue, Arial, sans-serif',
-                  fontSize: '11px',
-                  fontWeight: 500,
-                }}
-              >
-                info@nexuspbs.net
+              <span className="text-[11px] text-dark-200 leading-none truncate max-w-[140px]">
+                {adminEmail}
               </span>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 }
-
