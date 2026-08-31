@@ -122,7 +122,7 @@ export default function ClientsPage() {
   return (
     <>
       <Header />
-      <div className="px-8 pt-[50px] pb-[14px] flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 lg:pt-[50px] pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div className="flex flex-col items-start gap-[10px]">
           <div className="flex items-center gap-3">
             <h2 className="text-[24px] font-medium text-white leading-[1.3]">Clients</h2>
@@ -134,14 +134,14 @@ export default function ClientsPage() {
         <Button
           variant="gold"
           onClick={handleAdd}
-          className="!px-[14px] !py-[7px] !text-[13px] !font-medium flex items-center gap-[6px] shrink-0"
+          className="!px-[14px] !py-[7px] !text-[13px] !font-medium flex items-center gap-[6px] shrink-0 self-start sm:self-auto"
         >
           <Image src="/assets/icons/plus-icon.svg" alt="" width={16} height={16} aria-hidden="true" />
           Add Client
         </Button>
       </div>
 
-      <div className="px-6 space-y-4">
+      <div className="px-4 sm:px-6 lg:px-8 pb-8 space-y-4">
         {/* Search & Status Filter Controls */}
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-dark-500/80 p-4 rounded-lg border border-dark-400">
           {/* Search Box */}

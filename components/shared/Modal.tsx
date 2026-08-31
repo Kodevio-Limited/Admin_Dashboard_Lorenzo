@@ -54,8 +54,8 @@ export default function Modal({ isOpen, onClose, title, size = 'md', children, f
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-dark-400">
-          <h2 id="modal-title" className="text-lg font-semibold text-white leading-[1.4]">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-dark-400">
+          <h2 id="modal-title" className="text-base sm:text-lg font-semibold text-white leading-[1.4]">
             {title}
           </h2>
           <button
@@ -68,9 +68,9 @@ export default function Modal({ isOpen, onClose, title, size = 'md', children, f
             </svg>
           </button>
         </div>
-        <div className="px-6 py-4 overflow-y-auto flex-1">{children}</div>
+        <div className="px-4 sm:px-6 py-4 overflow-y-auto flex-1">{children}</div>
         {footer && (
-          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-dark-400">
+          <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3 px-4 sm:px-6 py-4 border-t border-dark-400">
             {footer}
           </div>
         )}

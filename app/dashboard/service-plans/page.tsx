@@ -66,10 +66,10 @@ export default function ServicePlansPage() {
   return (
     <>
       <Header />
-      <div className="px-8 pt-[50px] pb-[14px] flex items-end justify-between">
+      <div className="px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 lg:pt-[50px] pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div className="flex flex-col items-start gap-[10px]">
-          <h2 className="text-[24px] font-medium text-white leading-[1.3]">Service Plans</h2>
-          <span className="text-[14px] font-normal text-white/70 leading-[1.3]">
+          <h2 className="text-[20px] sm:text-[24px] font-medium text-white leading-[1.3]">Service Plans</h2>
+          <span className="text-[13px] sm:text-[14px] font-normal text-white/70 leading-[1.3]">
             View and manage active verification and advisory service plans.
           </span>
         </div>
@@ -77,14 +77,14 @@ export default function ServicePlansPage() {
         <Button
           variant="gold"
           onClick={handleAddPlan}
-          className="!px-[14px] !py-[7px] !text-[13px] !font-medium flex items-center gap-[6px]"
+          className="!px-[14px] !py-[7px] !text-[13px] !font-medium flex items-center gap-[6px] shrink-0 self-start sm:self-auto"
         >
           <Image src="/assets/icons/plus-icon.svg" alt="" width={16} height={16} aria-hidden="true" />
           Add Service Plan
         </Button>
       </div>
 
-      <div className="px-6 pb-6">
+      <div className="px-4 sm:px-6 lg:px-8 pb-6">
         {isError && (
           <div className="mb-4 p-4 bg-red-950/40 border border-red-800/50 rounded text-red-400 text-sm">
             Failed to load service plans: {error?.message || 'Unknown error'}

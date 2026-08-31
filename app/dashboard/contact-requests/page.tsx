@@ -51,16 +51,16 @@ export default function ContactRequestsPage() {
   return (
     <>
       <Header />
-      <div className="px-8 pt-[50px] pb-[14px]">
+      <div className="px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 lg:pt-[50px] pb-4">
         <div className="flex flex-col items-start gap-[10px]">
-          <h2 className="text-[24px] font-medium text-white leading-[1.3]">Contact Requests</h2>
-          <span className="text-[14px] font-normal text-white/70 leading-[1.3]">
+          <h2 className="text-[20px] sm:text-[24px] font-medium text-white leading-[1.3]">Contact Requests</h2>
+          <span className="text-[13px] sm:text-[14px] font-normal text-white/70 leading-[1.3]">
             View and manage website consultation and contact form submissions from prospective clients.
           </span>
         </div>
       </div>
 
-      <div className="px-6 pb-6">
+      <div className="px-4 sm:px-6 lg:px-8 pb-6">
         {isError && (
           <div className="mb-4 p-4 bg-red-950/40 border border-red-800/50 rounded text-red-400 text-sm">
             Failed to load contact requests: {error?.message || 'Unknown error'}
