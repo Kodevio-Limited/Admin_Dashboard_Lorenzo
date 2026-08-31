@@ -65,7 +65,7 @@ export default function ReportsPage() {
             <h2 className="text-[24px] font-medium text-white leading-[1.3]">Reports</h2>
           </div>
           <span className="text-[14px] font-normal text-white/70 leading-[1.3]">
-            Manage inspection reports and PDF documents.
+            Manage property verification reports and PDF documents.
           </span>
         </div>
         <Button

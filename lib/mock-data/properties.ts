@@ -16,7 +16,7 @@ const initialProperties: Property[] = [
     assignedFieldRep: 'Owen Reid',
     nextVisitDate: '2026-08-15',
     reportStatus: 'Up to Date',
-    notes: 'Main hotel structure with 120 rooms. Roof inspection due this quarter.',
+    notes: 'Main hotel structure with 120 rooms. Roof verification due this quarter.',
   },
   {
     id: 'p2',
@@ -100,7 +100,7 @@ const initialProperties: Property[] = [
     assignedFieldRep: 'Shane Gordon',
     nextVisitDate: '2026-08-12',
     reportStatus: 'Not Started',
-    notes: 'New construction. Initial certification inspection pending.',
+    notes: 'New construction. Initial certification verification pending.',
   },
   {
     id: 'p8',
@@ -142,7 +142,7 @@ const initialProperties: Property[] = [
     assignedFieldRep: 'Tanya Samuels',
     nextVisitDate: '2026-08-01',
     reportStatus: 'Pending',
-    notes: 'Eco-lodge near YS Falls. Initial compliance inspection in progress.',
+    notes: 'Eco-lodge near YS Falls. Initial compliance verification in progress.',
   },
   {
     id: 'p11',
@@ -156,7 +156,7 @@ const initialProperties: Property[] = [
     assignedFieldRep: 'Shane Gordon',
     nextVisitDate: '2027-01-15',
     reportStatus: 'Up to Date',
-    notes: 'Small retail plaza with 12 units. Annual inspection only.',
+    notes: 'Small retail plaza with 12 units. Annual verification visit only.',
   },
 ];
 

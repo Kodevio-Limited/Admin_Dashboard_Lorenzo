@@ -11,7 +11,7 @@ const initialClients: Client[] = [
     country: 'Jamaica',
     servicePlan: 'Premium',
     status: 'Active',
-    notes: 'Gated resort community in Ocho Rios. Monthly structural and environmental inspections required.',
+    notes: 'Gated resort community in Ocho Rios. Monthly structural and environmental verifications required.',
     assignedPropertyIds: ['p1', 'p2'],
   },
   {
@@ -37,7 +37,7 @@ const initialClients: Client[] = [
     country: 'Jamaica',
     servicePlan: 'Standard',
     status: 'Active',
-    notes: 'All-inclusive beachfront resort. Standard bi-monthly inspections.',
+    notes: 'All-inclusive beachfront resort. Standard bi-monthly verification visits.',
     assignedPropertyIds: ['p4'],
   },
   {
@@ -76,7 +76,7 @@ const initialClients: Client[] = [
     country: 'Jamaica',
     servicePlan: 'Basic',
     status: 'Inactive',
-    notes: 'Historic plantation in Trelawny. Seasonal inspections only.',
+    notes: 'Historic plantation in Trelawny. Seasonal verifications only.',
     assignedPropertyIds: ['p9'],
   },
   {
@@ -89,7 +89,7 @@ const initialClients: Client[] = [
     country: 'Jamaica',
     servicePlan: 'Standard',
     status: 'Pending',
-    notes: 'Eco-tourism property in St. Elizabeth. Awaiting initial inspection sign-off.',
+    notes: 'Eco-tourism property in St. Elizabeth. Awaiting initial verification sign-off.',
     assignedPropertyIds: ['p10'],
   },
   {
@@ -102,7 +102,7 @@ const initialClients: Client[] = [
     country: 'Jamaica',
     servicePlan: 'Basic',
     status: 'Active',
-    notes: 'Small commercial plaza in Portmore. Annual inspection plan.',
+    notes: 'Small commercial plaza in Portmore. Annual verification plan.',
     assignedPropertyIds: ['p11'],
   },
 ];

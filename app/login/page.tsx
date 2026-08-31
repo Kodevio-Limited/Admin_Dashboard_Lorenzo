@@ -96,10 +96,10 @@ export default function LoginPage() {
             Nexus Property Verification
           </span>
           <h2 className="text-3xl xl:text-4xl font-bold text-white leading-tight">
-            Jamaica&apos;s Trusted Inspection Partner
+            Jamaica&apos;s Trusted Property Verification Partner
           </h2>
           <p className="text-sm xl:text-base text-white/80 leading-relaxed">
-            Professional property verification, local representation, and inspection services across Jamaica.
+            Professional property verification, owner representation, and documentation services across Jamaica.
           </p>
         </div>
       </div>
@@ -124,7 +124,7 @@ export default function LoginPage() {
               Welcome to Admin Portal
             </h1>
             <p className="text-dark-200 text-sm sm:text-[15px]">
-              Sign in to manage clients, properties, reports, and inspections.
+              Sign in to manage clients, properties, reports, and verifications.
             </p>
           </div>
 

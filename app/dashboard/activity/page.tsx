@@ -23,7 +23,7 @@ const activity: ActivityEntry[] = [
   { id: 'ac1', timestamp: '2026-07-30 · 9:42 AM', actor: 'Tanya Samuels', action: 'submitted a report for', entity: 'YS Falls Eco Guest House', kind: 'Report' },
   { id: 'ac2', timestamp: '2026-07-30 · 8:15 AM', actor: 'Shane Gordon', action: 'completed a visit at', entity: 'Sandals Negril Beachfront Wing', kind: 'Visit' },
   { id: 'ac3', timestamp: '2026-07-29 · 4:05 PM', actor: 'System', action: 'flagged an overdue visit for', entity: 'Kings House Warehouse & Logistics Hub', kind: 'Visit' },
-  { id: 'ac4', timestamp: '2026-07-28 · 11:20 AM', actor: 'Nexus Admin', action: 'approved report for', entity: 'Mystic Ridge — Q3 Structural Inspection Report', kind: 'Report' },
+  { id: 'ac4', timestamp: '2026-07-28 · 11:20 AM', actor: 'Nexus Admin', action: 'approved report for', entity: 'Mystic Ridge — Q3 Structural Verification Report', kind: 'Report' },
   { id: 'ac5', timestamp: '2026-07-27 · 3:30 PM', actor: 'YS Falls Eco Retreat', action: 'registered as a new client', entity: '—', kind: 'Client' },
   { id: 'ac6', timestamp: '2026-07-26 · 10:00 AM', actor: 'System', action: 'completed scheduled portal maintenance', entity: '—', kind: 'System' },
 ];

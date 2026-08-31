@@ -27,7 +27,7 @@ const initialApprovals: Approval[] = [
   { id: 'ap1', title: 'Tryall Club — Quarterly Environmental Audit', propertyName: 'Tryall Club Golf Course & Villa Estate', clientName: 'Tryall Club Jamaica', fieldRep: 'Kareem James', submittedDate: '2026-07-20', status: 'Pending' },
   { id: 'ap2', title: 'Sandals Negril — Storm Damage Assessment', propertyName: 'Sandals Negril Beachfront Wing', clientName: 'Sandals Negril', fieldRep: 'Shane Gordon', submittedDate: '2026-07-23', status: 'Pending' },
   { id: 'ap3', title: 'YS Falls Eco Guest House — Initial Compliance Report', propertyName: 'YS Falls Eco Guest House', clientName: 'YS Falls Eco Retreat', fieldRep: 'Tanya Samuels', submittedDate: '2026-07-26', status: 'Pending' },
-  { id: 'ap4', title: 'Rose Hall Conference Centre — Pre-Occupancy Inspection', propertyName: 'Rose Hall Conference Centre', clientName: 'Rose Hall Developments', fieldRep: 'Shane Gordon', submittedDate: '2026-07-29', status: 'Pending' },
+  { id: 'ap4', title: 'Rose Hall Conference Centre — Pre-Occupancy Verification', propertyName: 'Rose Hall Conference Centre', clientName: 'Rose Hall Developments', fieldRep: 'Shane Gordon', submittedDate: '2026-07-29', status: 'Pending' },
 ];
 
 export default function ReportApprovalsPage() {

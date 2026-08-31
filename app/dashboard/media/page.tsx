@@ -62,7 +62,7 @@ export default function MediaPage() {
         <div className="flex flex-col items-start gap-[10px]">
           <h2 className="text-[24px] font-medium text-white leading-[1.3]">Media</h2>
           <span className="text-[14px] font-normal text-white/70 leading-[1.3]">
-            Manage property inspection photos, videos, and document attachments.
+            Manage property verification photos, videos, and document attachments.
           </span>
         </div>
         <Button

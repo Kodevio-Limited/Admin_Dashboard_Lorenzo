@@ -83,7 +83,7 @@ export default function OverviewPage() {
       label: 'Upcoming Visits',
       value: overview?.upComingVisits ?? 0,
       icon: CalendarIcon,
-      desc: 'Scheduled site inspections',
+      desc: 'Scheduled site verifications',
     },
   ];
 
@@ -140,7 +140,7 @@ export default function OverviewPage() {
         <div className="space-y-4 pt-2">
           <div className="flex items-center justify-between">
             <h3 className="text-base sm:text-lg font-semibold text-white">
-              Recent Inspection Reports
+              Recent Verification Reports
             </h3>
             <span className="text-xs text-dark-200 font-medium">
               Showing latest {recentReports.length} reports

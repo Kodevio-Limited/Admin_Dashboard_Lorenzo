@@ -8,7 +8,7 @@ const fieldReps = ['Owen Reid', 'Kareem James', 'Shane Gordon', 'Tanya Samuels']
 const initialReports: Report[] = [
   {
     id: 'r1',
-    title: 'Mystic Ridge — Q3 Structural Inspection Report',
+    title: 'Mystic Ridge — Q3 Structural Verification Report',
     status: 'Approved',
     visitDate: '2026-07-10',
     parish: 'St. Ann',
@@ -68,7 +68,7 @@ const initialReports: Report[] = [
   },
   {
     id: 'r5',
-    title: 'Rose Hall Conference Centre — Pre-Occupancy Inspection',
+    title: 'Rose Hall Conference Centre — Pre-Occupancy Verification',
     status: 'Draft',
     visitDate: '2026-07-28',
     parish: 'St. James',
